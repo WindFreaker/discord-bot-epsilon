@@ -2,6 +2,7 @@ import os
 import dropbox
 
 dbx = dropbox.Dropbox(os.getenv('DROPBOX_ACCESS_TOKEN'))
+os.mkdir('extensions')
 
 
 def download_extension(name):
