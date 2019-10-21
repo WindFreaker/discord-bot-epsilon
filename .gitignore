@@ -1,1 +1,5 @@
 .idea/*
+extensions/*
+example extensions/__pycache__/*
+__pycache__/*
+startup.cfg
