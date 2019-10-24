@@ -1,8 +1,8 @@
 from discord.ext import commands
-from discord.ext.commands import ExtensionAlreadyLoaded, ExtensionNotLoaded, ExtensionNotFound
+from discord.ext.commands import ExtensionAlreadyLoaded, ExtensionNotLoaded
 from dropbox.exceptions import ApiError
 
-from storage_handler import download_extension
+from storage_handler import download_extension, edit_config
 
 
 class DynamicHandler(commands.Cog):
@@ -13,15 +13,12 @@ class DynamicHandler(commands.Cog):
     @commands.is_owner()
     async def enable(self, ctx, arg):
         try:
+            download_extension(arg)
             self.bot.load_extension('extensions.' + arg)
             await ctx.send('```Extension enabled```')
-        except ExtensionNotFound:
-            try:
-                download_extension(arg)
-                self.bot.load_extension('extensions.' + arg)
-                await ctx.send('```Extension downloaded and enabled```')
-            except ApiError:
-                await ctx.send('```Extension not found```')
+            edit_config('startup', arg)  # should always add arg from startup.cfg
+        except ApiError:
+            await ctx.send('```Extension not found```')
         except ExtensionAlreadyLoaded:
             await ctx.send('```Extension already enabled```')
 
@@ -31,17 +28,19 @@ class DynamicHandler(commands.Cog):
         try:
             self.bot.unload_extension('extensions.' + arg)
             await ctx.send('```extension disabled```')
+            edit_config('startup', arg)  # should always remove arg from startup.cfg
         except ExtensionNotLoaded:
-            await ctx.send('```Extension not already enabled```')
+            await ctx.send('```Extension not currently enabled```')
 
     @commands.command()
     @commands.is_owner()
     async def reload(self, ctx, arg):
         try:
+            download_extension(arg)
             self.bot.reload_extension('extensions.' + arg)
             await ctx.send('```extension reloaded```')
         except ExtensionNotLoaded:
-            await ctx.send('```Extension not already enabled```')
+            await ctx.send('```Extension not currently enabled```')
 
     @commands.command()
     @commands.is_owner()
