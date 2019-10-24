@@ -1,7 +1,6 @@
 from discord.ext import commands
 from discord.ext.commands import ExtensionAlreadyLoaded, ExtensionNotLoaded
 from dropbox.exceptions import ApiError
-
 from storage_handler import download_extension, edit_config
 
 

@@ -1,3 +1,4 @@
+import glob
 import os
 import discord
 from discord.ext import commands
@@ -7,18 +8,22 @@ from storage_handler import download_extension
 
 print(f'Library Version: {discord.__version__}')
 try:
-    print('Epsilon Version: v1.' + os.getenv('HEROKU_RELEASE_VERSION')[1:])
+    print('Epsilon Version: v0.' + os.getenv('HEROKU_RELEASE_VERSION')[1:])
 except TypeError:
-    print('Epsilon Version: [test build]')
+    print('Epsilon Version: [unknown environment]')
 
 bot = commands.Bot(command_prefix=commands.when_mentioned)
 bot.remove_command('help')
 bot.add_cog(dynamic_handler.DynamicHandler(bot))
 
 exts = storage_handler.read_config('startup')
-for ext in exts:
-    download_extension(ext)
-    bot.load_extension('extensions.' + ext)
+if len(exts) != 0:
+    print('Downloading extensions listed in startup.cfg ...')
+    for ext in exts:
+        download_extension(ext)
+
+for file in glob.glob("extensions/*.py"):
+    bot.load_extension('extensions.' + file[11:-3])
 
 
 @bot.event
