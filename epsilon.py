@@ -17,8 +17,8 @@ bot.add_cog(dynamic_handler.DynamicHandler(bot))
 
 exts = storage_handler.read_config('startup')
 for ext in exts:
-    download_extension(str(ext)[2:-1])
-    bot.load_extension('extensions.' + str(ext)[2:-1])
+    download_extension(ext)
+    bot.load_extension('extensions.' + ext)
 
 
 @bot.event
