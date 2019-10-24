@@ -32,6 +32,3 @@ def edit_config(file, item):
     for line in existing_lines:
         new_lines += line + '\n'
     dbx.files_upload(str.encode(new_lines), '/' + file + '.cfg', mode=files.WriteMode.overwrite)
-
-
-edit_config('startup', 'yee_haw')
