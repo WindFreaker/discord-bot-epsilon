@@ -1,24 +1,25 @@
+import glob
 import os
 import discord
 from discord.ext import commands
-import storage_handler
-import dynamic_handler
-from storage_handler import download_extension
+import dropbox_handler
+import extension_dynamics
+from dropbox_handler import download_extension
 
 print(f'Library Version: {discord.__version__}')
-try:
-    print('Epsilon Version: v1.' + os.getenv('HEROKU_RELEASE_VERSION')[1:])
-except TypeError:
-    print('Epsilon Version: [test build]')
 
 bot = commands.Bot(command_prefix=commands.when_mentioned)
 bot.remove_command('help')
-bot.add_cog(dynamic_handler.DynamicHandler(bot))
+bot.add_cog(extension_dynamics.DynamicHandler(bot))
 
-exts = storage_handler.read_config('startup')
-for ext in exts:
-    download_extension(ext)
-    bot.load_extension('extensions.' + ext)
+exts = dropbox_handler.read_config('startup')
+if len(exts) != 0:
+    print('Downloading extensions listed in startup.cfg ...')
+    for ext in exts:
+        download_extension(ext)
+
+for file in glob.glob("extensions/*.py"):
+    bot.load_extension('extensions.' + file[11:-3])
 
 
 @bot.event

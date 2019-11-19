@@ -1,1 +1,1 @@
-worker: python epsilon.py
+worker: python main.py db-enabled
