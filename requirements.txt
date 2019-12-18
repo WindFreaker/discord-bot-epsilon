@@ -1,2 +1,2 @@
-discord.py
-dropbox
+discord.py==1.2.5
+dropbox==9.4.0
