@@ -34,5 +34,8 @@ def create_embed(color, author, title, desc, image):
     embed = Embed(color=color, title=title, description=desc)
     if image is not None:
         embed.set_image(url=image)
-    embed.set_footer(text=f'Request by {author.display_name} ({str(author)})')
+    if author.display_name != str(author)[:-5]:
+        embed.set_footer(text=f'Requested by {author.display_name} ({str(author)})')
+    else:
+        embed.set_footer(text=f'Requested by {str(author)}')
     return embed
