@@ -1,1 +1,1 @@
-worker: python main.py db-enabled
+worker: python main.py

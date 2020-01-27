@@ -3,12 +3,13 @@ import dropbox
 import sys
 from dropbox import files
 
+dbx = None
 dropbox_switch = False
-if len(sys.argv) != 1 and sys.argv[1] == 'db-enabled':
-    print('⚠ Dropbox support enabled ⚠')
-    dropbox_switch = True
 
-dbx = dropbox.Dropbox(os.getenv('DROPBOX_ACCESS_TOKEN'))
+if os.getenv('DROPBOX_ACCESS_TOKEN') is not None:
+    print('⚠ Dropbox access token found. Dropbox extension storage has been enabled. ⚠')
+    dropbox_switch = True
+    dbx = dropbox.Dropbox(os.getenv('DROPBOX_ACCESS_TOKEN'))
 
 
 def download_extension(name):

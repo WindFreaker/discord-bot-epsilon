@@ -1,2 +1,3 @@
-discord.py==1.2.5
+pymysql==0.9.3
+discord.py==1.3.1
 dropbox==9.4.0
