@@ -31,7 +31,7 @@ def save_extension_state(name, new_state):
         csr.execute(f'INSERT INTO global_extensions (extension_name) VALUES ("{name}")')
         db.commit()
     else:  # extension already in desired state (throw error?)
-        await dm_error_report('A critical error with database_handler has been found! #8921986')
+        print('A critical error with database_handler has been found! #8921986')
 
 
 # TODO close the database (not an issue rn afaik but is important overall)
