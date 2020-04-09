@@ -13,6 +13,7 @@ class DynamicHandler(commands.Cog):
     @commands.command()
     @commands.is_owner()
     async def enable(self, ctx, arg):
+        arg = arg.lower()  # fixes bug with enabling one extension multiple times via slightly different capitalization
         try:
             download_extension(arg)
             self.bot.load_extension('extensions.' + arg)
@@ -28,6 +29,7 @@ class DynamicHandler(commands.Cog):
     @commands.command()
     @commands.is_owner()
     async def disable(self, ctx, arg):
+        arg = arg.lower()  # fixes bug with enabling one extension multiple times via slightly different capitalization
         try:
             self.bot.unload_extension('extensions.' + arg)
             save_extension_state(arg, False)
