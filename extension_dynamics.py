@@ -2,7 +2,8 @@ from discord.ext import commands
 from discord.ext.commands import ExtensionAlreadyLoaded, ExtensionNotLoaded, ExtensionNotFound
 from dropbox.exceptions import ApiError
 from messenger import Messenger
-from dropbox_handler import download_extension, edit_config
+from dropbox_handler import download_extension
+from database_handler import save_extension_state
 
 
 class DynamicHandler(commands.Cog):
@@ -15,23 +16,27 @@ class DynamicHandler(commands.Cog):
         try:
             download_extension(arg)
             self.bot.load_extension('extensions.' + arg)
-            await Messenger(ctx, f'Extension `{arg}.py` has been enabled').success()
-            edit_config('startup', arg)  # should always add arg from startup.cfg
+            save_extension_state(arg, True)
+            await Messenger(ctx, f'Extension `{arg}.py` successfully enabled').success()
         except (ApiError, ExtensionNotFound):
-            await Messenger(ctx, f'Extension `{arg}.py` cannot be found').error()
+            await Messenger(ctx, f'Extension `{arg}.py` failed to enable')\
+                .add_desc('No extension by that name was found').error()
         except ExtensionAlreadyLoaded:
-            await Messenger(ctx, f'Extension `{arg}.py` is already enabled').error()
+            await Messenger(ctx, f'Extension `{arg}.py` failed to enable')\
+                .add_desc('That extension is already enabled').error()
 
     @commands.command()
     @commands.is_owner()
     async def disable(self, ctx, arg):
         try:
             self.bot.unload_extension('extensions.' + arg)
-            await Messenger(ctx, f'Extension `{arg}.py` has been disabled').success()
-            edit_config('startup', arg)  # should always remove arg from startup.cfg
+            save_extension_state(arg, False)
+            await Messenger(ctx, f'Extension `{arg}.py` successfully disabled').success()
         except ExtensionNotLoaded:
-            await Messenger(ctx, f'No extension called `{arg}.py` is currently enabled').error()
+            await Messenger(ctx, f'Extension `{arg}.py` failed to disable')\
+                .add_desc('No extension by that name is currently running').error()
 
+    # reloads (effectively a disable and immediate enable) to update the code being used by an extension
     @commands.command()
     @commands.is_owner()
     async def reload(self, ctx, arg):
@@ -42,6 +47,8 @@ class DynamicHandler(commands.Cog):
         except ExtensionNotLoaded:
             await Messenger(ctx, f'No extension called `{arg}.py` is currently running').error()
 
+    # prints a readable list of all extensions enabled for the bot
+    # TODO make the list not print out the name of hidden extensions
     @commands.command()
     @commands.is_owner()
     async def extensions(self, ctx):
