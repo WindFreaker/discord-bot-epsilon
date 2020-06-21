@@ -76,7 +76,3 @@ def modify_guild_config(guild_id, key, value):
 """
 
 # TODO close the database (not an issue rn afaik but is important overall)
-
-print(list_enabled_extensions())
-save_extension_state("ping_pong", True)
-print(list_enabled_extensions())
